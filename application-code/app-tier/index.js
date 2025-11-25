@@ -21,22 +21,15 @@ app.get('/health',(req,res)=>{
 });
 
 // ADD TRANSACTION
-app.post('/transaction', async (req, res) => {
-  try {
-    const { amount, desc } = req.body;
-    console.log(req.body);
-
-    const success = await transactionService.addTransaction(amount, desc);
-
-    if (success === 200) {
-      return res.json({ message: 'added transaction successfully' });
-    } else {
-      return res.json({ message: 'insert failed', status: success });
-    }
-  } catch (err) {
-    return res.json({ message: 'something went wrong', error: err.message });
-  }
+app.post("/transaction", async (req, res) => {
+  const { amount, description } = req.body;
+  await connection.execute(
+    "INSERT INTO transactions (amount, description) VALUES (?, ?)",
+    [amount, description]
+  );
+  res.send("OK");
 });
+
 
 // GET ALL TRANSACTIONS
 app.get('/transaction',(req,res)=>{
